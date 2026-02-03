@@ -13,5 +13,3 @@ build/
 .DS_Store
 .vscode/
 .idea/
-sql_server_schema.json
-extract_sql_server_schema.py

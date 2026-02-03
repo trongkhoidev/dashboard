@@ -26,9 +26,17 @@ Enterprise-grade HR & Payroll management system với dual database integration.
 
 ### Quick Start
 
+📖 **New Developer?** → Xem [SETUP.md](SETUP.md) để setup trong 5 phút!
+
 **Backend**:
 ```bash
+# 1. Copy .env template
+cp .env.example .env
+# 2. Sửa database credentials trong .env
+# 3. Test connections
 cd backend
+../venv/bin/python test_connections.py
+# 4. Start server
 ../venv/bin/uvicorn app.main:app --reload
 # API: http://localhost:8000
 # Docs: http://localhost:8000/api/docs
@@ -38,10 +46,10 @@ cd backend
 ```bash
 cd frontend
 npm run dev
-# App: http://localhost:5173
+# App: http://localhost:5173 hoặc 5174
 ```
 
-**Prerequisites**: Update `.env` with your database credentials.
+**Database Setup Guide**: Xem [backend/app/database/README.md](backend/app/database/README.md)
 
 ---
 
@@ -126,24 +134,39 @@ Dashboard/
 
 ### Database Setup
 
+✅ **CẢ 2 DATABASES ĐÃ KẾT NỐI THÀNH CÔNG!**
+
 **SQL Server (HUMAN_2025)**:
-- Host: `localhost` (via Azure Data Studio)
+- Host: `127.0.0.1:1433` (Docker container)
 - User: `sa`
 - Database: `HUMAN_2025`
+- Status: ✅ Connected
 
-**MySQL (payroll_2026)**:
-```bash
-mysql -u root -p
-CREATE DATABASE payroll_2026;
-# Import schema từ Documentation/payroll.txt
-```
+**MySQL (payroll)**:
+- Host: `localhost:3306`
+- User: `root`
+- Database: `payroll`
+- Status: ✅ Connected
+
+📖 **Xem hướng dẫn chi tiết**: [backend/app/database/README.md](backend/app/database/README.md)
 
 ### Environment Variables
 
-Edit `.env`:
+File `.env` đã được cấu hình:
 ```env
-SQL_SERVER_PASSWORD=your_sa_password
-MYSQL_PASSWORD=your_mysql_password
+# SQL Server
+SQL_SERVER_HOST=127.0.0.1
+SQL_SERVER_PORT=1433
+SQL_SERVER_USER=sa
+SQL_SERVER_PASSWORD=Ntkkidz2k50@
+SQL_SERVER_DATABASE=HUMAN_2025
+
+# MySQL
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=
+MYSQL_DATABASE=payroll
 ```
 
 ---

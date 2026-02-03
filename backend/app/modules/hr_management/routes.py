@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 
 from ...database.connections import db_manager
+from ...core.mock_data import mock_service
 from .services import HRService
 from .sync_service import SyncService
 from .schemas import (
@@ -30,13 +31,22 @@ def list_employees(
     List all employees với sync status
     Supports filtering by department và search by name
     """
-    with db_manager.get_hr_db() as hr_db, db_manager.get_payroll_db() as payroll_db:
-        employees = HRService.list_employees_with_sync_status(
-            hr_db, payroll_db,
-            department_id=department_id,
-            search_name=search
-        )
-        return employees
+    # Fallback to mock data if databases unavailable
+    if not db_manager.sql_server_available or not db_manager.mysql_available:
+        print("⚠️  Using mock data for employees (databases unavailable)")
+        return mock_service.get_mock_employees()
+    
+    try:
+        with db_manager.get_hr_db() as hr_db, db_manager.get_payroll_db() as payroll_db:
+            employees = HRService.list_employees_with_sync_status(
+                hr_db, payroll_db,
+                department_id=department_id,
+                search_name=search
+            )
+            return employees
+    except Exception as e:
+        print(f"⚠️  Database error, falling back to mock data: {e}")
+        return mock_service.get_mock_employees()
 
 
 @router.get("/employees/{employee_id}", response_model=EmployeeDetail)
@@ -71,9 +81,18 @@ def get_organization_structure():
 @router.get("/departments", response_model=List[DepartmentSchema])
 def list_departments():
     """Get all departments với employee count"""
-    with db_manager.get_hr_db() as hr_db:
-        departments = HRService.get_departments(hr_db)
-        return departments
+    # Fallback to mock data if database unavailable
+    if not db_manager.sql_server_available:
+        print("⚠️  Using mock data for departments (SQL Server unavailable)")
+        return mock_service.get_mock_departments()
+    
+    try:
+        with db_manager.get_hr_db() as hr_db:
+            departments = HRService.get_departments(hr_db)
+            return departments
+    except Exception as e:
+        print(f"⚠️  Database error, falling back to mock data: {e}")
+        return mock_service.get_mock_departments()
 
 
 # ============================================================================
@@ -86,9 +105,18 @@ def check_sync_status():
     Check sync status giữa HR và Payroll databases
     Trả về danh sách employees cần sync
     """
-    with db_manager.get_hr_db() as hr_db, db_manager.get_payroll_db() as payroll_db:
-        sync_check = SyncService.check_sync_needs(hr_db, payroll_db)
-        return sync_check
+    # Fallback to mock data if databases unavailable
+    if not db_manager.sql_server_available or not db_manager.mysql_available:
+        print("⚠️  Using mock data for sync check (databases unavailable)")
+        return mock_service.get_mock_sync_status()
+    
+    try:
+        with db_manager.get_hr_db() as hr_db, db_manager.get_payroll_db() as payroll_db:
+            sync_check = SyncService.check_sync_needs(hr_db, payroll_db)
+            return sync_check
+    except Exception as e:
+        print(f"⚠️  Database error, falling back to mock data: {e}")
+        return mock_service.get_mock_sync_status()
 
 
 @router.post("/sync/execute", response_model=SyncExecuteResponse)

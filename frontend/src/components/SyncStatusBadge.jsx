@@ -1,6 +1,5 @@
 /**
- * Sync Status Badge Component
- * Hiển thị trực quan sync status với màu sắc tương ứng
+ * Enhanced Sync Status Badge với modern design
  */
 import React from 'react';
 
@@ -8,27 +7,27 @@ const SyncStatusBadge = ({ status }) => {
     const statusConfig = {
         synced: {
             label: 'Đã đồng bộ',
-            bgColor: 'bg-green-100',
-            textColor: 'text-green-800',
-            dotColor: 'bg-green-500',
+            gradient: 'from-green-400 to-emerald-500',
+            icon: '✓',
+            glow: 'shadow-[0_0_15px_rgba(52,211,153,0.4)]',
         },
         needs_sync: {
             label: 'Cần đồng bộ',
-            bgColor: 'bg-red-100',
-            textColor: 'text-red-800',
-            dotColor: 'bg-red-500',
+            gradient: 'from-rose-400 to-red-500',
+            icon: '⚠',
+            glow: 'shadow-[0_0_15px_rgba(244,63,94,0.4)]',
         },
         syncing: {
             label: 'Đang đồng bộ',
-            bgColor: 'bg-yellow-100',
-            textColor: 'text-yellow-800',
-            dotColor: 'bg-yellow-500',
+            gradient: 'from-amber-400 to-yellow-500',
+            icon: '⟳',
+            glow: 'shadow-[0_0_15px_rgba(251,191,36,0.4)]',
         },
         error: {
             label: 'Lỗi',
-            bgColor: 'bg-gray-100',
-            textColor: 'text-gray-800',
-            dotColor: 'bg-gray-500',
+            gradient: 'from-gray-400 to-slate-500',
+            icon: '✕',
+            glow: 'shadow-[0_0_15px_rgba(100,116,139,0.4)]',
         },
     };
 
@@ -36,9 +35,11 @@ const SyncStatusBadge = ({ status }) => {
 
     return (
         <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.bgColor} ${config.textColor}`}
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${config.gradient} ${config.glow} transition-all duration-300 hover:scale-105`}
         >
-            <span className={`w-2 h-2 rounded-full ${config.dotColor}`}></span>
+            <span className={status === 'syncing' ? 'animate-spin' : ''}>
+                {config.icon}
+            </span>
             {config.label}
         </span>
     );
